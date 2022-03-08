@@ -26,7 +26,7 @@
 				|= ...
 |= scripts		# folder to store synthesizer scripts
 	|- toplevel.m			# specify object and amount 
-	|- variable_library.m		# scenario parameters
+	|- variable_library_scene.m		# scenario parameters
 	|- variable_library_radar.m	# radar parameters
 	|- variable_library_camera.m	# camera parameters
 	|= functions_main
