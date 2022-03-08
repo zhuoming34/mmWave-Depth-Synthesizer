@@ -1,6 +1,6 @@
 <<< 			R E A D M E			>>>
-<<< 	Radar Intensity Heatmap and Depth Image Synthesizer 	>>>
-<<<		-------------  Two CADs  --------------		>>>
+<<< Radar Intensity Heatmap and Depth Image Synthesizer >>>
+<<<	-------------  Two CADs  --------------		>>>
 <<< 			02/18/2022			>>>
 
 
