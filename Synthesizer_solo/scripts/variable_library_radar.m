@@ -37,8 +37,8 @@ As = 29.982e12; % Hz/s, 29.982MHz/us
 Rs = 2047e3; %2047ksps
 
 %N_FFT = Ts*Rs; % FFT length / number of range bins
-N_FFT = 256; % use the number directly here. 257 to have 256 bins, first one is all 0's
-N_FFT = N_FFT + 1;
+N_sample = 256; 
+N_FFT = N_sample + 1; % the last bin will be dropped
 Ts = N_FFT/Rs; % FMCW sweep tim
 range_bin = linspace(0,(Rs-Rs/N_FFT),N_FFT) /As *c /2; % range axis 
 % TI's eqn does not need to -Rs/N_FFT, difference -> 4cm less in max range,
