@@ -1,3 +1,10 @@
+UPDATES:
+04/28/2022: fixed problem of moving out-of-range points in pc2dep.m
+03/20/2022: added log text file
+03/12/2022: added vibration settings
+
+
+-----------------------------------------------------------
 <<< 			R E A D M E			>>>
 <<< Radar Intensity Heatmap and Depth Image Synthesizer	>>>
 <<<		-----	Single CAD	-----		>>>
