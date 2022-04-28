@@ -15,7 +15,7 @@
 function [DepthImg, ColorMap] = pc2depImg(visible_cart_v_dep)
     %format shortg; clk0 = clock; disp("Start generating depth images"); disp(clk0);
     %addpath('functions');
-    variable_library_scene;
+    %variable_library_scene;
     variable_library_camera;
     
     ptCloud = visible_cart_v_dep;
@@ -40,17 +40,19 @@ function [DepthImg, ColorMap] = pc2depImg(visible_cart_v_dep)
         proj_pts = [proj_x,proj_y,proj_z];
         pt_mark = zeros(size(proj_pts,1),1); % mark the points in projection plane
         for i = 1:size(proj_pts,1)
-            if (proj_x(i)<-ppH/2 || proj_x(i)>ppH/2 || proj_z(i)<-ppV/2 || proj_z(i)>ppV/2 )
+            %if (proj_x(i)<-ppH/2 || proj_x(i)>ppH/2 || proj_z(i)<-ppV/2 || proj_z(i)>ppV/2 )
+            if (abs(proj_x(i))>ppH/2 || abs(proj_z(i))>ppV/2 )
                 continue;
             end
             pt_mark(i) = 1;
         end
         visible_ptCloud_idx = find(pt_mark);
+        disp(strcat(num2str(size(proj_pts,1)-size(visible_ptCloud_idx,1))," points have been removed."));
         visible_ptCloud = zeros(size(visible_ptCloud_idx,1),3);
         visible_ptCloud_pp = zeros(size(visible_ptCloud_idx,1),3); % pts on projection plane
         for i = 1:size(visible_ptCloud_idx,1)
-            visible_ptCloud(i) = ptCloud(visible_ptCloud_idx(i));
-            visible_ptCloud_pp(i) = proj_pts(visible_ptCloud_idx(i));
+            visible_ptCloud(i,:) = ptCloud(visible_ptCloud_idx(i),:);
+            visible_ptCloud_pp(i,:) = proj_pts(visible_ptCloud_idx(i),:);
         end
         pc_x = visible_ptCloud(:,1); pc_y = visible_ptCloud(:,2); pc_z = visible_ptCloud(:,3);
         proj_x = visible_ptCloud_pp(:,1); proj_y = visible_ptCloud_pp(:,2); proj_z = visible_ptCloud_pp(:,3);

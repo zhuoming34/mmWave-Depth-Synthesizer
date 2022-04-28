@@ -3,14 +3,14 @@
 % 2022/03/14: removed snapshot setting, use #RX of elevation instead
 
 %% user-defined variables
-N_RX_az = 24; %24; % number of receiver (RX) in azimuth
+N_RX_az = 44; %24; % number of receiver (RX) in azimuth
 N_RX_el = 2; %64; % # RX in elevation
 
 N_sample = 256; % Number of ADC samples, or range bins in output radar heatmap
 N_phi = 64; % number of azimuth bins in output radar heatmap
 N_theta = 64; % number of elevation bins in output radar heatmap
 
-azi_FOV = 120; % azimuth FOV in degrees
+azi_FOV = 60; % azimuth FOV in degrees
 elv_FOV = 60; % elevation FOV in degrees
 
 array_gap = [2.5e-3,2.5e-3]; % antenna element spacing, 2.5mm
@@ -18,7 +18,7 @@ array_gap = [2.5e-3,2.5e-3]; % antenna element spacing, 2.5mm
 % Dynamic transform / vibration settings    
 % 'horizontal(left-right), horizontal(front-back), virtical(up-down)'
 vibration_mode_radar = '000'; 
-vibr_azi_lim = 2.5; vibr_rho_lim = 2.5; vibr_elv_lim = 2.5; % mm
+vibr_azi_lim = 5; vibr_rho_lim = 5; vibr_elv_lim = 5; % mm
 
 
 %% FMCW radar parameters

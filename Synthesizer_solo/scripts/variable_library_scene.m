@@ -7,11 +7,11 @@
 %%% -------------------------------------------------------------- %%%
 
 % sensor positions
-sensor_x = [0,1500,0,-1500]; % mm
-sensor_y = [0,1500,3000,1500]; % mm
+sensor_x = [0,2250,0,-2250]; % mm
+sensor_y = [0,2250,4500,2250]; % mm
 sensor_ang_deg = [0,90,180,270]; % orietation
 
-height_offset = 500; % mm, height of sensors on the ground
+height_offset = 800; % mm, height of sensors on the ground
 top_offset = 7000;  % mm, height of sensor for top-view
 
 % angle of rotation for every model
@@ -24,7 +24,7 @@ end
 rotate_ang = sort(rotate_ang);
 
 %translate_lim = [-1000, 1000; 1500, 3500]; % limits of the translation along the x and y axis
-translate_lim = [-500, 500; 1000, 2000]; % limits of the translation along the x and y axis
+translate_lim = [-750, 750; 1500, 3000]; % limits of the translation along the x and y axis
 translate_x_res = 10; %500; % resolution of translation along the x axis unit: mm
 translate_y_res = 10; %500; % resolution of translation along the y axis unit: mm
 
@@ -34,9 +34,9 @@ translate_y_res = 10; %500; % resolution of translation along the y axis unit: m
 %%% --------------------------------------------------------------- %%%
 % size of 3D intensity maps in Cartesian
 N_x_heat= 64; N_y_heat = 256; N_z_heat = 64;
-heatmap_ceiling = 1000; %mm
+heatmap_ceiling = 1750; %mm
 % for filtering, a percentage of max intensity value will be dropped
-threshold_factor = 5; % unit: percent 
+threshold_factor = 30; % unit: percent 
 threshold_factor = threshold_factor/100;
 
 % scene 3D space boundary
@@ -51,26 +51,6 @@ scene_lim_top = [SLE(1), SLE(4); ceil(top_offset/1000/2), top_offset/1000; SLE(1
 scene_lim_corner = [SLE(1)*sqrt(2), SLE(4)*sqrt(2); 
     (sensor_x(2)-SLE(4))*sqrt(2), (sensor_x(2)+SLE(4))*sqrt(2); 
     SLE(3), SLE(6)];
-
-
-%%% --------------------------------------------------------------- %%%
-%%% --------------------- Depth image related --------------------- %%% 
-%%% --------------------------------------------------------------- %%%
-variable_library_camera;
-% scene 2D plane boundary for depth image
-scene_corners = [SLE(1),SLE(2),SLE(3); SLE(1),SLE(2),SLE(6);
-                SLE(4),SLE(2),SLE(3); SLE(4),SLE(2),SLE(6)]; 
-            %[-1,1.5,-0.5; -1,1.5,1.5;  1,1.5,-0.5; 1,1.5,1.5]; % dresser
-scene_x = scene_corners(:,1); 
-scene_y = scene_corners(:,2); 
-scene_z = scene_corners(:,3);
-
-% scene projection
-scene_y_proj = linspace(focalL,focalL,size(scene_y,1))'; % focal length
-scene_ratio = scene_y./scene_y_proj;
-scene_x_proj = -scene_x./scene_ratio;
-scene_z_proj = -scene_z./scene_ratio;
-
 
 %%% --------------------------------------------------------------- %%%
 %%% -------------------- Point Cloud Structure -------------------- %%% 

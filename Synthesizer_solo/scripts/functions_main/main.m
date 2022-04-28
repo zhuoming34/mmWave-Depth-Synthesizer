@@ -1,25 +1,61 @@
 %%% 02/17/2022: Combine functions in all stages, modified some variable names 
 %%% 03/12/2022: added vibration error, minor function update
 function main(object_name, CAD_idx, start_idx, stop_idx)
-    % e.g. 2021 1 10 21 16 28, = Jan 10th, 9:16:28pm
     %format shortg; clk0 = clock; disp(clk0);
     SLASH = checkOS(); % slashes are different in Mac/Linux("/") and Windows("\") for file paths
     
     %addpath('functions_main');
+    % load libraries
     variable_library_scene;
     variable_library_radar;
     variable_library_camera;
     
-    disp(strcat("Size of antenna array: ", num2str(N_RX_az), "x", num2str(N_RX_el)));
-    %{
-    if (heatmap_scale == 1 || heatmap_scale == N_RX_el) 
-        disp(strcat("Scale of 3d maps: Full scale"));
-    else
-        disp(strcat("Scale of 3d maps: ", num2str(heatmap_scale), "-snapshot"));
-    end
-    %}
-    disp(strcat("Vibration mode: Radar->", vibration_mode_radar, ", Camera->", vibration_mode_cam));
-    disp(" ");
+    %% logging
+    atnaInfo=strcat("Size of antenna array: ",num2str(N_RX_az),"x",num2str(N_RX_el)); disp(atnaInfo);
+    vibrInfo=strcat("Vibration mode: Radar->",vibration_mode_radar,", Camera->",vibration_mode_cam); disp(vibrInfo);
+    
+    logFile = strcat("..",SLASH,"results",SLASH,object_name,"_",num2str(CAD_idx),SLASH,"log.txt");
+    fID = fopen(logFile,'w');
+    fprintf(fID,strcat("\n\t( ◞•̀w•́)◞\t",object_name,"\t#%d","\t◟(•̀w•́◟ )\n\n"),CAD_idx);
+    fprintf(fID,strcat("> Size of antenna array (horizontal*vertical)\n",...
+        "\t%d x %d\n\n"), N_RX_az, N_RX_el);
+    fprintf(fID,strcat("> Vibration modes",...
+        "\t( 0[off]/1[on] in x/azimuth, y/range, z/elevation directions )\n",...
+        "\tRadar -> ",vibration_mode_radar,"\t Camera -> ",vibration_mode_cam,"\n\n"));
+    fprintf(fID,strcat("> Spherical intensity dimension (range*azimuth*elevation) ",...
+        "[voxel]\n\t%d x %d x %d\n\n"), N_sample, N_phi, N_theta);
+    fprintf(fID,strcat("> Cartesian intensity dimension (y*x*z) [voxel]\n", ...
+        "\t%d x %d x %d\n\n"), N_y_heat, N_x_heat, N_z_heat);
+    fprintf(fID,strcat("> Image resolution (column*row) [pixel]\n",...
+        "\t%d x %d\n\n"), N_pixel_col, N_pixel_row);
+    fprintf(fID,strcat("> Radar FOV\n", ...
+        "\tAzimuth[deg]:\t%d\t\tres:\t%.4f\n",...
+        "\tElevation[deg]:\t%d\t\tres:\t%.4f\n",...
+        "\tRange[m]:\t%.4f\t\tres:\t%.4f","\n\n"),...
+        azi_FOV, phi_res_deg, elv_FOV, theta_res_deg, rho_max, rho_res);
+    fprintf(fID,strcat("> Camera FOV\n",...
+        "\tAzimuth[deg]:\t%.4f\t\tres:\t%.4f\n",...
+        "\tElevation[deg]:\t%.4f\t\tres:\t%.4f\n",...
+        "\tRange[m]:\t[%.1f, %.1f]\t\tres:\t%.4f\n\n"),...
+        cam_hfov_deg, cam_res_deg, cam_vfov_deg, cam_res_deg,...
+        cam_range_min, cam_range_max, (cam_range_max-cam_range_min)/256);   
+    fprintf(fID,strcat("> Sensor positions (x,y) [m]\t(w/ respect to sensor #1)\n", ...
+        "\tSensor #1\tSensor #2\tSensor #3\tSensor #4\n",...
+        "\t(%.3f, %.3f)\t(%.3f, %.3f)\t(%.3f, %.3f)\t(%.3f, %.3f)","\n\n"),...
+        [sensor_x;sensor_y]/1000); 
+    fprintf(fID,"> Sensor height (z) [m]\n\t%.3f\n\n",height_offset/1000); 
+    fprintf(fID,strcat("> Sensor orientations [deg]\t(w/ respect to sensor #1)\n", ...
+        "\t(North->0    West->90    South->180    East->270)\n",...
+        "\tSensor #1\tSensor #2\tSensor #3\tSensor #4\n",...
+        "\t%d\t\t%d\t\t%d\t\t%d","\n\n"),sensor_ang_deg); 
+    fprintf(fID,strcat("> Top sensor #0 (if used)\n",...
+        "\tPosition[m]:\t(%.3f, %.3f, %.3f) (x,y,z)\n",...
+        "\tOrientation:\tdownward\n\n"),[sensor_x(1),sensor_y(2),top_offset]/1000); 
+    fprintf(fID,strcat("> Object placement region [m] \t(w/ respect to sensor #1)\n",...
+        "\tx from\t%.3f\tto\t%.3f\n\ty from\t%.3f\tto\t%.3f\n\n"),translate_lim'/1000);
+    fclose(fID);
+    %type(logFile);
+    
     
     %%  
     obj_addr = strcat("..",SLASH,"results",SLASH, object_name, "_", num2str(CAD_idx));
@@ -46,7 +82,7 @@ function main(object_name, CAD_idx, start_idx, stop_idx)
         ks = kso;
         rng(ks);
         result_addr = strcat(obj_addr,SLASH,num2str(ceil(ks/500)));
-        for cs = 1:4
+        for cs = 1:4                    
             if cs ~= 5
                 view_idx = cs; 
                 car_scene_v = car1_v_origin;
@@ -117,11 +153,12 @@ function main(object_name, CAD_idx, start_idx, stop_idx)
             % convert unit from mm to m
             car_scene_v.cart_v = car_scene_v.cart_v/1000; 
             car_scene_v.bbox = car_scene_v.bbox/1000; 
-
-            
-            format shortg; clk = clock; disp(clk);
-            disp(strcat(object_name, " ", num2str(CAD_idx),", placement ", num2str(ks),", view ", num2str(view_idx)));
         
+            %% display status
+            %format shortg; clk = clock; disp(clk);
+            disp(" ");disp(string(datetime('now','TimeZone','local','Format','yyyy-MM-dd HH:mm:ss z')));
+            disp(strcat(object_name, " ", num2str(CAD_idx),", placement ", num2str(ks),", view ", num2str(view_idx)));
+            
             %% Modle camera point reflectors in the scene
             disp("Generating depth image")
             [visible_cart_v_dep] = remove_occlusion_v1(car_scene_v,"cam",0); % remove occluded body of the car for dep image
@@ -131,7 +168,7 @@ function main(object_name, CAD_idx, start_idx, stop_idx)
             depOrgFolder = strcat(result_addr,SLASH,"fig",SLASH,"1280x720");
             depthImgName = strcat(depOrgFolder,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".png");
             imwrite(DepthImg, ColorMap, depthImgName); 
-
+%{
             %% Modle radar point reflectors in the scene
             disp("Generating radar signal")
             %[visible_cart_v] = remove_occlusion(car_scene_v); % remove occluded body of the car
@@ -170,11 +207,12 @@ function main(object_name, CAD_idx, start_idx, stop_idx)
             heatmap_ct = Sph2CartHeat(view_idx,radar_heatmap_sph,threshold_factor);
             saveaddr_heat_ct = strcat(result_addr,SLASH,"cartHeat");
             save(strcat(saveaddr_heat_ct,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".mat"),'heatmap_ct');
-
+%}
             % finish
-            disp(" ")
+            %disp(" ")
             %disp(strcat("Model ", num2str(CAD_idx),", placement ", num2str(ks),", view ", num2str(view_idx), " finished"));
             %clk = clock; disp(clk); %format shortg
         end
     end
 end
+
