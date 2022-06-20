@@ -2,16 +2,16 @@
 close all;clear;clc;
 addpath('functions_main'); addpath('functions_helper'); addpath('functions_Sph2Cart');
 
-object1_name = "car";
-object2_name = "rbarm";
+object1_name = "chair";
+object2_name = "desk";
 
 start_idx = 1; % index to start from
-stop_idx = 20; % index to stop by
+stop_idx = 500; % index to stop by
 %N_placement = 500; % number of scenes to generate
 
-for CAD1_idx = 1
+for CAD1_idx = 8
     
-    for CAD2_idx = 1
+    for CAD2_idx = 4
     
         disp(strcat("Generating data for ", object1_name, " #", num2str(CAD1_idx), ...
             " and ", object2_name, " #", num2str(CAD2_idx), ...

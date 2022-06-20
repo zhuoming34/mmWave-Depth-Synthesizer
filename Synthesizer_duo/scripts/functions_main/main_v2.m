@@ -158,18 +158,30 @@ function main_v2(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
             end
          
             % convert unit from mm to m
+            cad1_v.cart_v = cad1_v.cart_v/1000;
+            cad2_v.cart_v = cad2_v.cart_v/1000;
             scene_v.cart_v = scene_v.cart_v/1000; 
             scene_v.bbox = scene_v.bbox/1000; 
             
             format shortg; clk = clock; disp(clk);
             disp(strcat(obj1_name, " ", num2str(CAD1_idx),", placement ", num2str(ks),", view ", num2str(view_idx)));
         
+            %% labeling
+            
+            [visible_cad1] = remove_occlusion_v1(cad1_v,"cam",0); % remove occluded body of the car for dep image
+            [visible_cad2] = remove_occlusion_v1(cad2_v,"cam",0); % remove occluded body of the car for dep image
+            Imglabels = labelingImg(visible_cad1, visible_cad2);
+            saveaddr_label = strcat(result_addr,SLASH,"label");
+            save(strcat(saveaddr_label,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".mat"),'Imglabels');
+
+%{           
             %% Modle camera point reflectors in the scene
             disp("Generating depth image")
             [visible_cart_v_dep] = remove_occlusion_v1(scene_v,"cam",0); % remove occluded body of the car for dep image
             %save(strcat(rftaddr,'md_',num2str(CAD_idxs),'_pm_',num2str(ks),"_cam_",num2str(cam),'_CameraReflector','.mat'), 'visible_cart_v_dep');
 
-            [DepthImg, ColorMap] = pc2depImg(visible_cart_v_dep);       
+            DepthImg = pc2depImg(visible_cart_v_dep); 
+            ColorMap = gray;
             depOrgFolder = strcat(result_addr,SLASH,"fig",SLASH,"1280x720");
             depthImgName = strcat(depOrgFolder,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".png");
             imwrite(DepthImg, ColorMap, depthImgName); 
@@ -220,7 +232,7 @@ function main_v2(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
             heatmap_ct = Sph2CartHeat(view_idx,radar_heatmap_sph,threshold_factor);
             saveaddr_heat_ct = strcat(result_addr,SLASH,"cartHeat");
             save(strcat(saveaddr_heat_ct,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".mat"),'heatmap_ct');
-
+%}
             % finish
             disp(" ")
             %disp(strcat("Model ", num2str(CAD_idx),", placement ", num2str(ks),", view ", num2str(view_idx), " finished"));

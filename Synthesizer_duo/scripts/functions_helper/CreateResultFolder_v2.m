@@ -34,6 +34,18 @@ function CreateResultFolder_v2(obj1_name, CAD1_idx, obj2_name, CAD2_idx)
             end
         end
 
+        % image label result folder
+        lbl_folder = strcat(section_folder,SLASH,"label");
+        if ~exist(lbl_folder, 'dir')
+            mkdir(lbl_folder);
+        end
+        for view = 1:4
+            view_folder = strcat(lbl_folder,SLASH,"cam",num2str(view));
+            if ~exist(view_folder, 'dir')
+                mkdir(view_folder);
+            end
+        end
+        
         % Cartesian intensity result folder
         cart_folder = strcat(section_folder,SLASH,"cartHeat");
         if ~exist(cart_folder, 'dir')

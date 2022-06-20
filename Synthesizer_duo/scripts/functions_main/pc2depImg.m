@@ -12,7 +12,7 @@
 % VFOV = 54deg, HFOV = 85deg
 % "The focus distance is fixed. All objects at distances from 28cm out to infinity will be sharp"
 % depth range = [0.1, 15] meters
-function [DepthImg, ColorMap] = pc2depImg(visible_cart_v_dep)
+function DepthImg = pc2depImg(visible_cart_v_dep)
     %format shortg; clk0 = clock; disp("Start generating depth images"); disp(clk0);
     %addpath('functions');
     variable_library_scene;
@@ -34,17 +34,19 @@ function [DepthImg, ColorMap] = pc2depImg(visible_cart_v_dep)
         proj_pts = [proj_x,proj_y,proj_z];
         pt_mark = zeros(size(proj_pts,1),1); % mark the points in projection plane
         for i = 1:size(proj_pts,1)
-            if (proj_x(i)<-ppH/2 || proj_x(i)>ppH/2 || proj_z(i)<-ppV/2 || proj_z(i)>ppV/2 )
+            %if (proj_x(i)<-ppH/2 || proj_x(i)>ppH/2 || proj_z(i)<-ppV/2 || proj_z(i)>ppV/2 )
+            if (abs(proj_x(i))>ppH/2 || abs(proj_z(i))>ppV/2)
                 continue;
             end
             pt_mark(i) = 1;
         end
         visible_ptCloud_idx = find(pt_mark);
+        disp(strcat(num2str(size(proj_pts,1)-size(visible_ptCloud_idx,1))," points have been removed."));
         visible_ptCloud = zeros(size(visible_ptCloud_idx,1),3);
         visible_ptCloud_pp = zeros(size(visible_ptCloud_idx,1),3); % pts on projection plane
         for i = 1:size(visible_ptCloud_idx,1)
-            visible_ptCloud(i) = ptCloud(visible_ptCloud_idx(i));
-            visible_ptCloud_pp(i) = proj_pts(visible_ptCloud_idx(i));
+            visible_ptCloud(i,:) = ptCloud(visible_ptCloud_idx(i),:);
+            visible_ptCloud_pp(i,:) = proj_pts(visible_ptCloud_idx(i),:);
         end
         pc_x = visible_ptCloud(:,1); pc_y = visible_ptCloud(:,2); pc_z = visible_ptCloud(:,3);
         proj_x = visible_ptCloud_pp(:,1); proj_y = visible_ptCloud_pp(:,2); proj_z = visible_ptCloud_pp(:,3);
@@ -127,12 +129,12 @@ function [DepthImg, ColorMap] = pc2depImg(visible_cart_v_dep)
 
     % saving images
     Dep1 = abs(I - 1)*255;
-    Dep2 = abs(I2 - 1)*255;
-    reszImg = imresize(Dep2, [128,128]);
-    cmap1 = jet; cmap2 = gray;
+    %Dep2 = abs(I2 - 1)*255;
+    %reszImg = imresize(Dep2, [128,128]);
+    %cmap1 = jet; cmap2 = gray;
 
     DepthImg = Dep1;
-    ColorMap = cmap2;
+    %ColorMap = cmap2;
     % gray-scaled original-size depth image
     %outputBaseFileName1 = strcat(outaddr1,"cam",num2str(cam),SLASH,num2str(idx),".png");
     %outputBaseFileName1 = strcat(outaddr1,num2str((idx+os-1)*4+1 + cam+camos-1),".png");

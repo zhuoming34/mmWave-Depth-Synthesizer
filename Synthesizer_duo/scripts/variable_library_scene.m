@@ -7,11 +7,11 @@
 %%% -------------------------------------------------------------- %%%
 
 % sensor positions
-sensor_x = [0,10000,0,-10000]; % mm
-sensor_y = [0,10000,20000,10000]; % mm
+sensor_x = [0,3500,0,-3500]; % mm
+sensor_y = [0,3500,7000,3500]; % mm
 sensor_ang_deg = [0,90,180,270]; % orietation
 
-height_offset = 1000; % mm, height of sensors on the ground
+height_offset = 500; % mm, height of sensors on the ground
 top_offset = 7000;  % mm, height of sensor for top-view
 
 % angle of rotation for every model
@@ -24,8 +24,8 @@ end
 rotate_ang = sort(rotate_ang);
 
 % limits of the translation along the x and y axis
-translate_lim_1 = [-6000, -2000; 8000, 12000]; % for 1st CAD
-translate_lim_2 = [2000, 6000; 8000, 12000]; % for 2nd CAD
+translate_lim_1 = [-1500, -500; 2000, 3000]; % for 1st CAD
+translate_lim_2 = [-500, 1500; 3000, 5000]; % for 2nd CAD
 
 translate_x_res = 10; %500; % resolution of translation along the x axis unit: mm
 translate_y_res = 10; %500; % resolution of translation along the y axis unit: mm
@@ -38,7 +38,7 @@ translate_y_res = 10; %500; % resolution of translation along the y axis unit: m
 N_x_heat= 64; N_y_heat = 256; N_z_heat = 64;
 
 % scene 3D space boundary
-scene_lim_edge = [-6, 6; 4, 16; -1, 2]; % [x1,x2; y1,y2; z1,z2]
+scene_lim_edge = [-1.5, 1.5; 2, 5; -0.5, 1]; % [x1,x2; y1,y2; z1,z2]
 SLE = scene_lim_edge;
 scene_lim_top = [SLE(1), SLE(4); ceil(top_offset/1000/2), top_offset/1000; SLE(1), SLE(4)];
 scene_lim_corner = [SLE(1)*sqrt(2), SLE(4)*sqrt(2); 
