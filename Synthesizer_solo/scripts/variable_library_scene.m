@@ -7,11 +7,11 @@
 %%% -------------------------------------------------------------- %%%
 
 % sensor positions
-sensor_x = [0,2250,0,-2250]; % mm
-sensor_y = [0,2250,4500,2250]; % mm
+sensor_x = [0,5000,0,-5000]; % mm
+sensor_y = [0,5000,10000,5000]; % mm
 sensor_ang_deg = [0,90,180,270]; % orietation
 
-height_offset = 800; % mm, height of sensors on the ground
+height_offset = 1250; % mm, height of sensors on the ground
 top_offset = 7000;  % mm, height of sensor for top-view
 
 % angle of rotation for every model
@@ -24,7 +24,7 @@ end
 rotate_ang = sort(rotate_ang);
 
 %translate_lim = [-1000, 1000; 1500, 3500]; % limits of the translation along the x and y axis
-translate_lim = [-750, 750; 1500, 3000]; % limits of the translation along the x and y axis
+translate_lim = [-2000, 2000; 3000, 7000]; % limits of the translation along the x and y axis
 translate_x_res = 10; %500; % resolution of translation along the x axis unit: mm
 translate_y_res = 10; %500; % resolution of translation along the y axis unit: mm
 
@@ -36,7 +36,7 @@ translate_y_res = 10; %500; % resolution of translation along the y axis unit: m
 N_x_heat= 64; N_y_heat = 256; N_z_heat = 64;
 heatmap_ceiling = 1750; %mm
 % for filtering, a percentage of max intensity value will be dropped
-threshold_factor = 30; % unit: percent 
+threshold_factor = 5; % unit: percent 
 threshold_factor = threshold_factor/100;
 
 % scene 3D space boundary

@@ -1,10 +1,10 @@
 close all;clear;clc;
 addpath('functions_main'); addpath('functions_helper'); addpath('functions_sph2cart');
 
-object_name = "cart";
+object_name = "car";
 
-start_idx = 501; % index to start from
-stop_idx = 501; % index to stop by
+start_idx = 1; % index to start from
+stop_idx = 1; % index to stop by
 
 for CAD_idx = 1
     
