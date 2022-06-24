@@ -134,9 +134,7 @@ function main_solo(object_name, CAD_idx, start_idx, stop_idx)
 
             % vibration errors
             depPtCloud = visible_cart_v_dep;
-            depPtCloud(:,1) = depPtCloud(:,1) + vibr_x_err;
-            depPtCloud(:,2) = depPtCloud(:,2) + vibr_y_err;
-            depPtCloud(:,3) = depPtCloud(:,3) + vibr_z_err;
+            depPtCloud = depPtCloud + [vibr_x_err, vibr_y_err, vibr_z_err]; 
     
             DepthImg = pc2depImg(depPtCloud);       
             ColorMap = gray;
