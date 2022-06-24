@@ -1,6 +1,7 @@
 %%% ---------------------------------------------------------------- %%%
 %%% --------------------- Depth camera related --------------------- %%% 
 %%% ---------------------------------------------------------------- %%%
+rng(0) % set a seed for random vibrations in variable libraries
 
 N_pixel_col = 1280; N_pixel_row = 720;
 focalL_px = 700; % focal lenght in pixel

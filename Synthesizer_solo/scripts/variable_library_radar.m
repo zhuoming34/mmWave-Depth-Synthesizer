@@ -2,11 +2,13 @@
 % 2022/03/12: added vibration errors
 % 2022/03/14: removed snapshot setting, use #RX of elevation instead
 % 2022/06/07: updated vibration errors, and fix problem in rho direction
+% 2022/06/12: accumulate errors
 % 2022/06/20: added size of activated antennas feature
+rng(0) % set a seed for random vibrations in variable libraries
 
 %% user-defined variables
-N_RX_az = 32; %24; % number of receiver (RX) in azimuth
-N_RX_el = 8; %64; % # RX in elevation
+N_RX_az = 64; %24; % number of receiver (RX) in azimuth
+N_RX_el = 32; %64; % # RX in elevation
 
 N_sample = 256; % Number of ADC samples, or range bins in output radar heatmap
 N_phi = 64; % number of azimuth bins in output radar heatmap
@@ -17,7 +19,7 @@ elv_FOV = 30; % elevation FOV in degrees
 
 array_gap = [2.5e-3, 2.5e-3]; % antenna element basis spacing in [x,z], 2.5mm
 % antenna element bundle size [AZI x ELV]
-atn_bdl = [1, 8]; % activated antennas move together at each step 
+atn_bdl = [4, 2]; % activated antennas move together at each step 
 if mod(N_RX_az,atn_bdl(1)) ~= 0
     error(strcat("Azimuth: total number of antennas: %d is not a ", ...
     "multiple of the one in an elemnet bundle: %d"), N_RX_az, atn_bdl(1));
@@ -29,9 +31,11 @@ end
 
 % Dynamic transform / vibration settings    
 % 'horizontal(left-right), horizontal(front-back), virtical(up-down)'
-vibration_mode_radar = '111'; 
+vibration_mode_radar = '000'; 
 % standard deviation at every step
-vibr_azi_stdev = 2.0144; vibr_rho_stdev = 1.2906; vibr_elv_stdev = 3.1884; % mm
+vibr_azi_stdev = 1.6666;%2.0144; 
+vibr_rho_stdev = 1.6666;%1.2906; 
+vibr_elv_stdev = 1.6666;%3.1884; % mm
 vibr_height_stdev = 15.6425;
 
 

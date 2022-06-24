@@ -1,6 +1,5 @@
-%N_CAD_car=1; % number of CAD models of cars, max =38
-%N_placement = 500; % # of placement we create with every selected car/group of cars
 %SLASH = checkOS(); % slashes are different in Mac/Linux("/") and Windows("\") for file paths
+rng(0) % set a seed for random vibrations in variable libraries
 
 %%% -------------------------------------------------------------- %%%
 %%% ------------------- Scenario setup related ------------------- %%%
