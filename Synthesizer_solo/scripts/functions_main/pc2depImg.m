@@ -19,12 +19,7 @@ function DepthImg = pc2depImg(visible_cart_v_dep)
     variable_library_camera;
     
     ptCloud = visible_cart_v_dep;
-    
-    % vibration errors
-    ptCloud(:,1) = ptCloud(:,1) + vibr_x_err;
-    ptCloud(:,2) = ptCloud(:,2) + vibr_y_err;
-    ptCloud(:,3) = ptCloud(:,3) + vibr_z_err;
-    
+        
     pc_x = ptCloud(:,1); pc_y = ptCloud(:,2); pc_z = ptCloud(:,3);
     
     % perspective projection

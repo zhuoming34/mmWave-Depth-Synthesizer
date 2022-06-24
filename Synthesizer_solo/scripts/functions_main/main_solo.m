@@ -1,7 +1,7 @@
 %%% 02/17/2022: Combine functions in all stages, modified some variable names 
 %%% 03/12/2022: added vibration error, minor function update
 %%% 06/08/2022: updated logging function
-function main(object_name, CAD_idx, start_idx, stop_idx)
+function main_solo(object_name, CAD_idx, start_idx, stop_idx)
     %format shortg; clk0 = clock; disp(clk0);
     SLASH = checkOS(); % slashes are different in Mac/Linux("/") and Windows("\") for file paths
     
@@ -132,7 +132,13 @@ function main(object_name, CAD_idx, start_idx, stop_idx)
             [visible_cart_v_dep] = remove_occlusion_v1(car_scene_v,"cam",0); % remove occluded body of the car for dep image
             %save(strcat(rftaddr,'md_',num2str(CAD_idxs),'_pm_',num2str(ks),"_cam_",num2str(cam),'_CameraReflector','.mat'), 'visible_cart_v_dep');
 
-            DepthImg = pc2depImg(visible_cart_v_dep);       
+            % vibration errors
+            depPtCloud = visible_cart_v_dep;
+            depPtCloud(:,1) = depPtCloud(:,1) + vibr_x_err;
+            depPtCloud(:,2) = depPtCloud(:,2) + vibr_y_err;
+            depPtCloud(:,3) = depPtCloud(:,3) + vibr_z_err;
+    
+            DepthImg = pc2depImg(depPtCloud);       
             ColorMap = gray;
             depOrgFolder = strcat(result_addr,SLASH,"fig",SLASH,"1280x720");
             depthImgName = strcat(depOrgFolder,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".png");
