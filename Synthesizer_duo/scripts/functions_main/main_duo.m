@@ -1,6 +1,6 @@
 %%% 03/03/2022
 %%% Combine two CAD models
-function main_v2(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
+function main_duo(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
     % e.g. 2021 1 10 21 16 28, = Jan 10th, 9:16:28pm
     %format shortg; clk0 = clock; disp(clk0);
     SLASH = checkOS(); % slashes are different in Mac/Linux("/") and Windows("\") for file paths
@@ -8,6 +8,7 @@ function main_v2(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
     %addpath('functions_main');
     variable_library_scene;
     variable_library_radar;
+    variable_library_camera;
     
     disp(strcat("Size of antenna array: ", num2str(N_RX_az), "x", num2str(N_RX_el)));
     disp(strcat("Scale of 3d maps: ", heatmap_scale));
@@ -170,17 +171,22 @@ function main_v2(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
             
             [visible_cad1] = remove_occlusion_v1(cad1_v,"cam",0); % remove occluded body of the car for dep image
             [visible_cad2] = remove_occlusion_v1(cad2_v,"cam",0); % remove occluded body of the car for dep image
+            visible_cad1 = visible_cad1 + [vibr_x_err, vibr_y_err, vibr_z_err];
+            visible_cad2 = visible_cad2 + [vibr_x_err, vibr_y_err, vibr_z_err];
             Imglabels = labelingImg(visible_cad1, visible_cad2);
             saveaddr_label = strcat(result_addr,SLASH,"label");
             save(strcat(saveaddr_label,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".mat"),'Imglabels');
 
-%{           
+         
             %% Modle camera point reflectors in the scene
             disp("Generating depth image")
             [visible_cart_v_dep] = remove_occlusion_v1(scene_v,"cam",0); % remove occluded body of the car for dep image
             %save(strcat(rftaddr,'md_',num2str(CAD_idxs),'_pm_',num2str(ks),"_cam_",num2str(cam),'_CameraReflector','.mat'), 'visible_cart_v_dep');
 
-            DepthImg = pc2depImg(visible_cart_v_dep); 
+            % vibration errors
+            depPtCloud = visible_cart_v_dep;
+            depPtCloud = depPtCloud + [vibr_x_err, vibr_y_err, vibr_z_err];            
+            DepthImg = pc2depImg(depPtCloud); 
             ColorMap = gray;
             depOrgFolder = strcat(result_addr,SLASH,"fig",SLASH,"1280x720");
             depthImgName = strcat(depOrgFolder,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".png");
@@ -215,24 +221,15 @@ function main_v2(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
 
             %% Generate intensity maps in spherical coordinates
             disp("Generating spherical intensity map")
-            %radar_heatmap_sph = genSphHeat(signal_array_noisy, "2ss"); % "full" of "2ss"
-            signal_array = signal_array_noisy;
-            if (heatmap_scale == "full")
-                radar_heatmap_sph = radar_dsp(signal_array);
-            elseif (heatmap_scale == "2ss")
-                ctr_snapshot = ceil(size(signal_array,3)/2);
-                signal_array_2 = signal_array(:,:,ctr_snapshot:ctr_snapshot+1); % 2 snapshots in the middle vertically
-                radar_heatmap_sph = radar_dsp2ss(signal_array_2);
-            else
-                error('Please enter the correct scale of snapshot: "full" or "2ss"');
-            end
+            radar_heatmap_sph = radar_dsp(signal_array_noisy);
+			%radar_heatmap_sph = round(radar_heatmap_sph,4);
 
             %% Convert intensity maps from spherical to Cartesian coordinates
             disp("Generating Cartesian intensity map")
             heatmap_ct = Sph2CartHeat(view_idx,radar_heatmap_sph,threshold_factor);
             saveaddr_heat_ct = strcat(result_addr,SLASH,"cartHeat");
             save(strcat(saveaddr_heat_ct,SLASH,"cam",num2str(view_idx),SLASH,num2str(ks),".mat"),'heatmap_ct');
-%}
+
             % finish
             disp(" ")
             %disp(strcat("Model ", num2str(CAD_idx),", placement ", num2str(ks),", view ", num2str(view_idx), " finished"));

@@ -23,7 +23,7 @@ for CAD1_idx = 8
         tStart = tic; % start timer
 
         %main(object_name, CAD_idx, start_idx, stop_idx); % save all indices under the same folder 
-        main_v2(object1_name, CAD1_idx, object2_name, CAD2_idx, start_idx, stop_idx); % save with grouping by index
+        main_duo(object1_name, CAD1_idx, object2_name, CAD2_idx, start_idx, stop_idx); % save with grouping by index
 
         dispElpTime(tStart); % stop timer and display elapsed time
         

@@ -5,7 +5,7 @@ function radar_heatmap = radar_dsp(signal_array)
 
     variable_library_radar; % load radar configurations
     
-    range_FFT_array = fft(signal_array,N_FFT,1).*repmat(range_bin.',[1,array_size(1),array_size(2)]); % range FFT
+    range_FFT_array = fft(signal_array,N_sample,1).*array_rho_m; % range FFT
     range_FFT_array = range_FFT_array(range_bin_FoV,:,:); % select range bins in the field of view
 
     %% Angle of Arrival Estimation

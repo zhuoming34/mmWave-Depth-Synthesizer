@@ -10,9 +10,6 @@ function signal_array = simulate_radar_signal(reflector_cart_v)
     t_ax = 0:1/Rs:(Ts-1/Rs); t_ax = t_ax.'; % time axis, Rs=sample rate
     t_matrix = repmat(t_ax,1,array_size(1),array_size(2));
 
-    array_x_m = repmat(array_x_idx*array_gap(1),1,array_size(2));
-    array_z_m = repmat(array_z_idx*array_gap(2),array_size(1),1);
-
     signal_array = zeros(length(t_ax),array_size(1),array_size(2));
 
     for kp = 1:length(reflector_cart_v)
