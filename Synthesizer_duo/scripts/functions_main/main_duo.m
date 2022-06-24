@@ -11,7 +11,7 @@ function main_duo(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
     variable_library_camera;
     
     disp(strcat("Size of antenna array: ", num2str(N_RX_az), "x", num2str(N_RX_el)));
-    disp(strcat("Scale of 3d maps: ", heatmap_scale));
+    %disp(strcat("Scale of 3d maps: ", heatmap_scale));
     
     %%  
     %obj_addr = strcat("..",SLASH,"results",SLASH, obj1_name, "_", num2str(CAD1_idx));

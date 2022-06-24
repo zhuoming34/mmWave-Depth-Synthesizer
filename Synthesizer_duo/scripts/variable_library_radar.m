@@ -1,5 +1,6 @@
 % Revised radar variables, with configuration used in mmWave Studio
 % 2020/11/20
+rng(0) % set a seed for random vibrations in variable libraries
 %%
 N_RX_az = 64;%24; % number of receiver (RX) in azimuth
 N_RX_el = 32;%64; % # RX in elevation
@@ -7,10 +8,12 @@ N_RX_el = 32;%64; % # RX in elevation
 azi_FOV = 120; % azimuth FOV in degrees
 elv_FOV = 30; % elevation FOV in degrees
 
+%N_FFT = Ts*Rs; % FFT length / number of range bins
+N_FFT = 256; % use the number directly here. 257 to have 256 bins, first one is all 0's
+
 %% FMCW radar parameters
 c = 3e8; % speed of light
 Fs = 60*1e9; % radar start frequeny
-lambda = c/fc; % radar wavelength
 RampEndTime = 133e-6; % 133us
 As = 29.982e12; % Hz/s, 29.982MHz/us
 Rs = 2047e3; %2047ksps
@@ -18,7 +21,8 @@ Rs = 2047e3; %2047ksps
 %BW = 1.2e9; % FMCW bandwidth = 1.2 GHz
 BW = As*RampEndTime; %3987.61e6; % Bandwidth = 3987.61MHz, max 4e9;
 fc = Fs + BW/2; % radar center frequeny 62GHz
-Ts = N_sample/Rs; % FMCW sweep time, ADC sampling time
+lambda = c/fc; % radar wavelength
+Ts = N_FFT/Rs; % FMCW sweep time, ADC sampling time
 
 
 %% radar Field of View (FoV)
@@ -46,10 +50,6 @@ theta = theta_deg/180*pi;
 %rho_res = c/2/BW; % range resolution, 3.8cm for 3987.61MHz
 rho_res = c/2/(As*Ts); % in m, 4cm since cannot use whole BW due to ADC start time
 
-%N_FFT = Ts*Rs; % FFT length / number of range bins
-N_FFT = 256; % use the number directly here. 257 to have 256 bins, first one is all 0's
-N_FFT = N_FFT + 1;
-Ts = N_FFT/Rs; % FMCW sweep tim
 range_bin = linspace(0,(Rs-Rs/N_FFT),N_FFT) /As *c /2; % range axis 
 % TI's eqn does not need to -Rs/N_FFT, difference -> 4cm less in max range,
 % and distributed into each range bin
@@ -59,7 +59,7 @@ N_rho = length(rho); % number of range bins in the output radar heatmap
 
 
 % antenna element bundle size [AZI x ELV]
-atn_bdl = [8, 1]; % activated antennas move together at each step 
+atn_bdl = [4, 2]; % activated antennas move together at each step 
 if mod(N_RX_az,atn_bdl(1)) ~= 0
     error(strcat("Azimuth: total number of antennas: %d is not a ", ...
     "multiple of the one in an elemnet bundle: %d"), N_RX_az, atn_bdl(1));
@@ -73,7 +73,9 @@ end
 % 'horizontal(left-right), horizontal(front-back), virtical(up-down)'
 vibration_mode_radar = '111'; 
 % standard deviation at every step
-vibr_azi_stdev = 2.0144; vibr_rho_stdev = 1.2906; vibr_elv_stdev = 3.1884; % mm
+vibr_azi_stdev = 1.6666;%2.0144; 
+vibr_rho_stdev = 1.6666;%1.2906; 
+vibr_elv_stdev = 1.6666;%3.1884; % mm
 vibr_height_stdev = 15.6425;
 
 %% antenna array
