@@ -15,7 +15,7 @@ for CAD_idx = 1
     "> from placement <", num2str(start_idx), "> to <", num2str(stop_idx), ">"));
     
     tStart = tic; % start timer
-    main(object_name, CAD_idx, start_idx, stop_idx); % save with grouping by index
+    main_solo(object_name, CAD_idx, start_idx, stop_idx); % save with grouping by index
     dispElpTime(tStart); % stop timer and display elapsed time
     
 end
