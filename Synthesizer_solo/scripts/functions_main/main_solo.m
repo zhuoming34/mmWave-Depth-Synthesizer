@@ -171,7 +171,6 @@ function main_solo(object_name, CAD_idx, start_idx, stop_idx)
 
             %% Generate intensity maps in spherical coordinates
             disp("Generating spherical intensity map")
-            %radar_heatmap_sph = genSphHeat(signal_array_noisy, "2ss"); % "full" of "2ss"
             %signal_array = signal_array_noisy;
             radar_heatmap_sph = radar_dsp(signal_array_noisy);
 			%radar_heatmap_sph = round(radar_heatmap_sph,4);

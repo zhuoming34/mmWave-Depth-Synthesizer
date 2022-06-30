@@ -2,42 +2,26 @@
 % 2022/03/12: added vibration errors
 % 2022/03/14: removed snapshot setting, use #RX of elevation instead
 % 2022/06/07: updated vibration errors, and fix problem in rho direction
-% 2022/06/12: accumulate errors
-% 2022/06/20: added size of activated antennas feature
-rng(0) % set a seed for random vibrations in variable libraries
 
 %% user-defined variables
-N_RX_az = 64; %24; % number of receiver (RX) in azimuth
-N_RX_el = 32; %64; % # RX in elevation
+N_RX_az = 10; %24; % number of receiver (RX) in azimuth
+N_RX_el = 2; %64; % # RX in elevation
 
 N_sample = 256; % Number of ADC samples, or range bins in output radar heatmap
 N_phi = 64; % number of azimuth bins in output radar heatmap
 N_theta = 64; % number of elevation bins in output radar heatmap
 
-azi_FOV = 120; % azimuth FOV in degrees
-elv_FOV = 30; % elevation FOV in degrees
+azi_FOV = 60; % azimuth FOV in degrees
+elv_FOV = 60; % elevation FOV in degrees
 
-array_gap = [2.5e-3, 2.5e-3]; % antenna element basis spacing in [x,z], 2.5mm
-% antenna element bundle size [AZI x ELV]
-atn_bdl = [4, 2]; % activated antennas move together at each step 
-if mod(N_RX_az,atn_bdl(1)) ~= 0
-    error(strcat("Azimuth: total number of antennas: %d is not a ", ...
-    "multiple of the one in an elemnet bundle: %d"), N_RX_az, atn_bdl(1));
-end
-if mod(N_RX_el,atn_bdl(2)) ~= 0
-    error(strcat("Elvation: total number of antennas: %d is not a ", ...
-    "multiple of the one in an elemnet bundle: %d"), N_RX_el, atn_bdl(2));
-end
+array_gap = [2.5e-3,2.5e-3]; % antenna element spacing in [x,z], 2.5mm
 
 % Dynamic transform / vibration settings    
 % 'horizontal(left-right), horizontal(front-back), virtical(up-down)'
 vibration_mode_radar = '000'; 
 % standard deviation at every step
-vibr_azi_stdev = 1.6666;%2.0144; 
-vibr_rho_stdev = 1.6666;%1.2906; 
-vibr_elv_stdev = 3.3333;%3.1884; % mm
-%vibr_height_stdev = 15.6425;
-
+vibr_azi_stdev = 2.0144; vibr_rho_stdev = 1.2906; vibr_elv_stdev = 3.1884; % mm
+vibr_height_stdev = 15.6425;
 
 %% FMCW radar parameters
 c = 3e8; % speed of light
@@ -117,24 +101,19 @@ if vibration_mode_radar(1) == '1'
     array_x_err = zeros([N_RX_az,N_RX_el]); 
     acum_err_x = 0; %accumulated error
     cur_x = array_x_m(1,1);
-    atn_bdl_gap_x = repmat(linspace(0,array_gap(1)*(atn_bdl(1)-1),atn_bdl(1))',1,atn_bdl(2));
     % from lower-left to upper-right
-    for x_idx = 1:atn_bdl(1):array_size(1)
-        if mod(fix(x_idx/atn_bdl(1))+1,2) == 1 % odd col, bottom-up
+    for x_idx = 1:array_size(1)
+        if mod(x_idx,2) == 1 % odd col, bottom-up
             lim_lower = 1; lim_upper = array_size(2); direction = 1;
         else % even col, top-down
             lim_lower = array_size(2); lim_upper = 1; direction = -1;
         end     
-        for z_idx = lim_lower:direction*atn_bdl(2):lim_upper
+        for z_idx = lim_lower:direction:lim_upper
             acum_err_x = acum_err_x + normrnd(0,vibr_azi_stdev/1000);
-            if direction == 1
-                array_x_err(x_idx:x_idx+atn_bdl(1)-1,z_idx:z_idx+atn_bdl(2)-1) = cur_x + acum_err_x + atn_bdl_gap_x;
-            else
-                array_x_err(x_idx:x_idx+atn_bdl(1)-1,z_idx-atn_bdl(2)+1:z_idx) = cur_x + acum_err_x + atn_bdl_gap_x;
-            end
+            array_x_err(x_idx,z_idx) = cur_x + acum_err_x;
         end
-        if (z_idx == lim_upper+atn_bdl(2)-1) || (z_idx == lim_upper-atn_bdl(2)+1)
-            cur_x = cur_x + array_gap(1)*atn_bdl(1); % move to next column
+        if z_idx == lim_upper
+            cur_x = cur_x + array_gap(1); % move to next column
         end        
     end
     array_x_m = array_x_err;
@@ -145,22 +124,16 @@ if vibration_mode_radar(2) == '1'
     array_rho_m_err = zeros(size(array_rho_m)); % 256 x Azi x Elv
     rho_err = zeros(size(range_bin));
     acum_err_y = 0; %accumulated error
-    for x_idx = 1:atn_bdl(1):array_size(1)
-        if mod(fix(x_idx/atn_bdl(1))+1,2) == 1 % odd col, bottom-up
+    for x_idx = 1:array_size(1)
+        if mod(x_idx,2) == 1 % odd col, bottom-up
             lim_lower = 1; lim_upper = array_size(2); direction = 1;
         else % even col, top-down
             lim_lower = array_size(2); lim_upper = 1; direction = -1;
         end 
-        for z_idx = lim_lower:direction*atn_bdl(2):lim_upper
+        for z_idx = lim_lower:direction:lim_upper
             %vibr_rho_err = normrnd(0,vibr_rho_stdev/1000); % apply same error to all bins
             acum_err_y = acum_err_y + normrnd(0,vibr_rho_stdev/1000);
-            rho_m_err = range_bin.' + acum_err_y; % 256x1
-            rho_m_err_bdl = repmat(rho_m_err,[1,atn_bdl(1),atn_bdl(2)]);% 256xAxE         
-            if direction == 1
-                array_rho_m_err(:,x_idx:x_idx+atn_bdl(1)-1,z_idx:z_idx+atn_bdl(2)-1) = rho_m_err_bdl; 
-            else
-                array_rho_m_err(:,x_idx:x_idx+atn_bdl(1)-1,z_idx-atn_bdl(2)+1:z_idx) = rho_m_err_bdl;
-            end
+            array_rho_m_err(:,x_idx,z_idx) = range_bin.' + acum_err_y; % 256x1
         end
     end
     %array_rho_m_err(find(array_rho_m_err<0)) = 0;
@@ -173,23 +146,18 @@ if vibration_mode_radar(3) == '1'
     array_z_err = zeros([N_RX_az,N_RX_el]); 
     acum_err_z = 0; %accumulated error
     cur_z = array_z_m(1,1);
-    atn_bdl_gap_z = repmat(linspace(0,array_gap(2)*(atn_bdl(2)-1),atn_bdl(2)),atn_bdl(1),1);
     % from lower-left to upper-right
-    for x_idx = 1:atn_bdl(1):array_size(1)
-        if mod(fix(x_idx/atn_bdl(1))+1,2) == 1 % odd col, bottom-up
+    for x_idx = 1:array_size(1)
+        if mod(x_idx,2) == 1 % odd col, bottom-up
             lim_lower = 1; lim_upper = array_size(2); direction = 1;
         else % even col, top-down
             lim_lower = array_size(2); lim_upper = 1; direction = -1;
         end     
-        for z_idx = lim_lower:direction*atn_bdl(2):lim_upper
+        for z_idx = lim_lower:direction:lim_upper
             acum_err_z = acum_err_z + normrnd(0,vibr_elv_stdev/1000);
-            if direction == 1
-                array_z_err(x_idx:x_idx+atn_bdl(1)-1,z_idx:z_idx+atn_bdl(2)-1) = cur_z + acum_err_z + atn_bdl_gap_z;
-            else
-                array_z_err(x_idx:x_idx+atn_bdl(1)-1,z_idx-atn_bdl(2)+1:z_idx) = cur_z + acum_err_z + atn_bdl_gap_z;
-            end
-            if (z_idx ~= lim_upper+atn_bdl(2)-1) && (z_idx ~= lim_upper-atn_bdl(2)+1)
-                cur_z = cur_z + array_gap(2)*direction*atn_bdl(2); % next ideal position
+            array_z_err(x_idx,z_idx) = cur_z + acum_err_z;
+            if z_idx ~= lim_upper
+                cur_z = cur_z + array_gap(2)*direction; % next ideal position
             end 
         end
        
