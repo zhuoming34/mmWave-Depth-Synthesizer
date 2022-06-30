@@ -168,7 +168,7 @@ function main_duo(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
             disp(strcat(obj1_name, " ", num2str(CAD1_idx),", placement ", num2str(ks),", view ", num2str(view_idx)));
         
             %% labeling
-            
+            disp("Labeling depth image")
             [visible_cad1] = remove_occlusion_v1(cad1_v,"cam",0); % remove occluded body of the car for dep image
             [visible_cad2] = remove_occlusion_v1(cad2_v,"cam",0); % remove occluded body of the car for dep image
             visible_cad1 = visible_cad1 + [vibr_x_err, vibr_y_err, vibr_z_err];
@@ -180,12 +180,13 @@ function main_duo(obj1_name, CAD1_idx, obj2_name, CAD2_idx, start_idx, stop_idx)
          
             %% Modle camera point reflectors in the scene
             disp("Generating depth image")
-            [visible_cart_v_dep] = remove_occlusion_v1(scene_v,"cam",0); % remove occluded body of the car for dep image
+            %[visible_cart_v_dep] = remove_occlusion_v1(scene_v,"cam",0); % remove occluded body of the car for dep image
             %save(strcat(rftaddr,'md_',num2str(CAD_idxs),'_pm_',num2str(ks),"_cam_",num2str(cam),'_CameraReflector','.mat'), 'visible_cart_v_dep');
 
             % vibration errors
-            depPtCloud = visible_cart_v_dep;
-            depPtCloud = depPtCloud + [vibr_x_err, vibr_y_err, vibr_z_err];            
+            %depPtCloud = visible_cart_v_dep;
+            %depPtCloud = depPtCloud + [vibr_x_err, vibr_y_err, vibr_z_err]; 
+            depPtCloud = [visible_cad1; visible_cad2];
             DepthImg = pc2depImg(depPtCloud); 
             ColorMap = gray;
             depOrgFolder = strcat(result_addr,SLASH,"fig",SLASH,"1280x720");

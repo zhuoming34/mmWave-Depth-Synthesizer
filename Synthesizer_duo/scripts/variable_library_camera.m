@@ -24,10 +24,10 @@ cam_res_deg = atan(1/focalL_px); % one pixel length / focal lenght
 
 %% Dynamic transform / vibration settings    
 % 'x(left-right), y(front-back), z(up-down),'
-vibration_mode_cam = '111'; 
+vibration_mode_cam = '000'; 
 vibr_x_stdev = 1.6666;%2.0144; 
 vibr_y_stdev = 1.6666;%1.2906; 
-vibr_z_stdev = 1.6666;%3.1884; % mm
+vibr_z_stdev = 3.3333;%3.1884; % mm
 
 vibr_x_err = 0; vibr_y_err = 0; vibr_z_err = 0;
 if vibration_mode_cam(1) == '1'

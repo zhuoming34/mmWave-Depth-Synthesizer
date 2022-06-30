@@ -71,12 +71,12 @@ end
 
 % Dynamic transform / vibration settings    
 % 'horizontal(left-right), horizontal(front-back), virtical(up-down)'
-vibration_mode_radar = '111'; 
+vibration_mode_radar = '000'; 
 % standard deviation at every step
 vibr_azi_stdev = 1.6666;%2.0144; 
 vibr_rho_stdev = 1.6666;%1.2906; 
-vibr_elv_stdev = 1.6666;%3.1884; % mm
-vibr_height_stdev = 15.6425;
+vibr_elv_stdev = 3.3333;%3.1884; % mm
+%vibr_height_stdev = 15.6425;
 
 %% antenna array
 % 11/21, TX_pos is used in simulate_radar_signal.m function
