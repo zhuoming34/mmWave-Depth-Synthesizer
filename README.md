@@ -12,10 +12,10 @@
 - universal: choice of one/two/three objects 
 
 for more objects, modify the following files:
-|- toplevel.m
-|- variable_library_scene.m
-  |- add another translate_lim 
-|- main.m
+- toplevel.m
+- variable_library_scene.m
+-- add another translate_lim 
+- main.m
  - 
 - 
 
