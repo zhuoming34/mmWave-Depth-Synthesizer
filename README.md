@@ -6,18 +6,18 @@
 ## More about [CAD models](https://github.com/zhuoming34/CAD-Model-PointCloud)
 
 ## Versions
-- solo: one object
-- duo: two objects
-- trio: three objects
-- universal: choice of one/two/three objects 
+- **solo**: one object
+- **duo**: two objects
+- **trio**: three objects
+- **universal**: choice of one/two/three objects 
 
-for more objects, modify the following files:
-- toplevel.m
-- variable_library_scene.m
--- add another translate_lim 
-- main.m
- - 
-- 
+**For more objects**, modify the following files:
+1. **toplevel.m**
+2. variable_library_scene.m
+  - add another translate_lim 
+3. main.m
+  - 
+4. labelImg.m
 
 
 ### README will be updated soon
