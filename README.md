@@ -13,11 +13,16 @@
 
 **For more objects**, modify the following files:
 - **toplevel.m**
-- variable_library_scene.m
-  - add another translate_lim 
-3. main.m
-  - 
-4. labelImg.m
-
+- **variable_library_scene.m**
+  - add new **translate_lim**
+- **main.m**
+  - add placements for new objects
+  - (refer to duo/trio)
+- **labelImg.m**
+  - add labels for new objects
+- **CreateResultFolder.m**
+  - add new object names and indices
+- **logging.m**
+  - add new object names, indice, and boundaries
 
 ### README will be updated soon
