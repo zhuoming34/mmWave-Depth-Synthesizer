@@ -16,13 +16,13 @@
 - **variable_library_scene.m**
   - add new **translate_lim**
 - **main.m**
-  - add placements for new objects
-  - (refer to duo/trio)
+  - add **placements** for new objects
+  - (refer to **duo/trio**)
 - **labelImg.m**
-  - add labels for new objects
+  - add **labels** for new objects
 - **CreateResultFolder.m**
-  - add new object names and indices
+  - add new object **names** and **indices**
 - **logging.m**
-  - add new object names, indice, and boundaries
+  - add new object **names**, **indices**, and **boundaries**
 
 ### more details for README will be added ASAP
