@@ -12,8 +12,8 @@
 - **universal**: choice of one/two/three objects 
 
 **For more objects**, modify the following files:
-1. **toplevel.m**
-2. variable_library_scene.m
+- **toplevel.m**
+- variable_library_scene.m
   - add another translate_lim 
 3. main.m
   - 
