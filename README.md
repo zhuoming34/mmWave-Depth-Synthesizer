@@ -25,4 +25,4 @@
 - **logging.m**
   - add new object names, indice, and boundaries
 
-### more details for README will be added soon
+### more details for README will be added ASAP
