@@ -3,4 +3,6 @@
 
 ## Based on [Hawkeye's data synthesizer](https://github.com/JaydenG1019/HawkEye-Data-Code)
 
-### TO BE UPDATED SOON
+## More about [CAD models](https://github.com/zhuoming34/CAD-Model-PointCloud)
+
+### README will be updated soon
